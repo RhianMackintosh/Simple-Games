@@ -1,6 +1,8 @@
 #Simple SignUp and LogIn Program with addition of mini games element
 import sqlite3
 import sys
+from random import *
+import time
 
 #creating the database to add things into
 db = sqlite3.connect("users.db")
@@ -101,18 +103,87 @@ def Menu():
 def Menu2(number):
     menu = input("What would you like to do:\n\
     1. Edit your profile\n\
-    2. Go to the games\n")
+    2. View your profile\n\
+    3. Go to the games\n")
     e = False
     while e == False:
         if menu == "1":
             e = True
             print("Make edit function")
         elif menu == "2":
-            print("Make games menu")
             e = True
+            profile(number)
+        elif menu == "3":
+            e = True
+            gamesMenu(number)
         else:
             menu = input("Please enter '1' or '2': ")
-    
+
+
+#=========================================================================================================================
+def gamesMenu(number):
+    menu = input("What would you like to do:\n\
+    1. Rock Paper Scissors\n\
+    2. Guess the number game\n\
+    3. Game 3\n")
+    e = False
+    while e == False:
+        if menu == "1":
+            e = True
+            print("Add rock paper scissors")
+        elif menu == "2":
+            RandomNum(number)
+            e = True
+        elif menu == "3":
+            print("Make a game 3")
+            e = True
+        else:
+            menu = input("Please enter a number 1-3 : ")
+#=========================================================================================================================
+def RandomNum(number):
+    CompNum = randint(0,101)
+
+    print("Welcome to Guess The Number!")
+    time.sleep(0.5)
+    print("The computer will think of a number, between 1-100")
+    time.sleep(0.5)
+    print("your job is to guess what number its thinking of in as little")
+    print("Goes as possible.")
+    time.sleep(0.5)
+    print("Good luck!")
+
+    time.sleep(1)
+    print("*computer thinks of a number*")
+    time.sleep(1)
+
+    GuessR = False
+    Guesses = 1
+
+    while GuessR == False:
+        UserGuess=int(input("Guess the number: "))
+        time.sleep(.3)
+        if UserGuess > 100:
+            print("The number must be between 1-100!")
+        elif UserGuess < 1:
+            print("The Number must be between 1-100!")
+        elif UserGuess > CompNum:
+            print("Wrong! *Hint: too big!*")
+            Guesses = Guesses + 1
+        elif UserGuess < CompNum:
+            print("Wrong! *Hint: too small!*")
+            Guesses = Guesses + 1
+        elif UserGuess == CompNum:
+            print("Well Done! Correct!")
+            print("You took: ",Guesses," Guesses")
+            GuessR = True
+        else:
+            print("error")
+    cursor.execute('''UPDATE users SET G1HS = ? where number = ?''',(Guesses,number,))
+    again  = input("Press any key to play again or 'm' to go back to main menu: ")
+    if again == "m":
+        Menu2(number)
+    else:
+        RandomNum(number)
 #=========================================================================================================================
 def profile(number):
     cursor.execute('''SELECT * FROM users where number == ?''',(number,))
@@ -127,6 +198,9 @@ def profile(number):
         G3HS = row[8]
         print("========================================")
         print("WELCOME BACK: "+name+" "+surname)
+        print("Guess the number highscore: "+str(G1HS)+" Guesses")
+        print("Rock Paper scissors wins: "+str(G2HS))
+        print("Game 3: "+str(G3HS))
 
         Menu2(number)
     
@@ -136,4 +210,7 @@ def profile(number):
 Menu()
 
 
-            
+#TO DO:
+#1. sort out passing numbers or using global
+#2. sort out re doing the games
+#3. sort out saving/dropping users stuff
